@@ -6,10 +6,10 @@ namespace gymlogger.Dtos.Account
     {
         [Required]
         public string? Username { get; set; }
-        [Required]
-        [EmailAddress]
+        //[Required]
+        //[EmailAddress]
         public string? Email { get; set; }
-        [Required]
+        //[Required]
         public string? Password { get; set; }
 
     }

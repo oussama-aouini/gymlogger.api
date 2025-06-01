@@ -1,4 +1,5 @@
-﻿using gymlogger.Dtos.Account;
+﻿using FluentValidation;
+using gymlogger.Dtos.Account;
 using gymlogger.Interfaces;
 using gymlogger.Models;
 using Microsoft.AspNetCore.Identity;
@@ -47,8 +48,15 @@ namespace gymlogger.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto, IValidator<RegisterDto> validator)
         {
+            var validationResult = validator.Validate(registerDto);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult);
+            }
+
             try
             {
                 if (!ModelState.IsValid)

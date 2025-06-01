@@ -1,3 +1,4 @@
+using FluentValidation;
 using gymlogger.Data;
 using gymlogger.Interfaces;
 using gymlogger.Models;
@@ -78,7 +79,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddIdentity<AppUser, IdentityRole>(options => 
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
@@ -88,15 +89,16 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDBContext>();
 
-builder.Services.AddAuthentication(options => 
+builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =
-    options.DefaultChallengeScheme = 
-    options.DefaultForbidScheme = 
+    options.DefaultChallengeScheme =
+    options.DefaultForbidScheme =
     options.DefaultScheme =
-    options.DefaultSignInScheme = 
+    options.DefaultSignInScheme =
     options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options => {
+}).AddJwtBearer(options =>
+{
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -111,10 +113,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Injects the fluent validation validators
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly, includeInternalTypes: true);
+
 // this means for this interface i want this implimentation there is another overload that takes only object in the generic 
 // the ioc container find the following interfaces and then inject the specified objects
 
-builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>(); 
+builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<ISetRepository, SetRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
